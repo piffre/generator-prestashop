@@ -1,5 +1,5 @@
 # generator-prestashop [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Coverage percentage][coveralls-image]][coveralls-url]
-> One-liner command to download and install any version of PrestaShop 
+> One-liner command to download and install any version of PrestaShop
 
 This Yeoman generator bootstraps a fresh PrestaShop store in seconds. It's kind of a hacky thing, but it works and you'll save some precious time if you often need to install PrestaShop stores.
 
@@ -38,9 +38,17 @@ MIT © [Marc Picaud](https://github.com/marcpicaud)
 
 [npm-image]: https://badge.fury.io/js/generator-prestashop.svg
 [npm-url]: https://npmjs.org/package/generator-prestashop
-[travis-image]: https://travis-ci.org/marcpicaud/generator-prestashop.svg?branch=master
-[travis-url]: https://travis-ci.org/marcpicaud/generator-prestashop
-[daviddm-image]: https://david-dm.org/marcpicaud/generator-prestashop.svg?theme=shields.io
-[daviddm-url]: https://david-dm.org/marcpicaud/generator-prestashop
-[coveralls-image]: https://coveralls.io/repos/marcpicaud/generator-prestashop/badge.svg
-[coveralls-url]: https://coveralls.io/r/marcpicaud/generator-prestashop
+
+[travis-image]: https://travis-ci.org/piffre/generator-prestashop.svg?branch=master
+[travis-url]: https://travis-ci.org/piffre/generator-prestashop
+[daviddm-image]: https://david-dm.org/piffre/generator-prestashop.svg?theme=shields.io
+[daviddm-url]: https://david-dm.org/piffre/generator-prestashop
+[coveralls-image]: https://coveralls.io/repos/piffre/generator-prestashop/badge.svg
+[coveralls-url]: https://coveralls.io/r/piffre/generator-prestashop
+
+[origin-travis-image]: https://travis-ci.org/marcpicaud/generator-prestashop.svg?branch=master
+[origin-travis-url]: https://travis-ci.org/marcpicaud/generator-prestashop
+[origin-daviddm-image]: https://david-dm.org/marcpicaud/generator-prestashop.svg?theme=shields.io
+[origin-daviddm-url]: https://david-dm.org/marcpicaud/generator-prestashop
+[origin-coveralls-image]: https://coveralls.io/repos/marcpicaud/generator-prestashop/badge.svg
+[origin-coveralls-url]: https://coveralls.io/r/marcpicaud/generator-prestashop
