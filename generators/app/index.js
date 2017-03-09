@@ -10,7 +10,7 @@ var AdmZip = require('adm-zip');
 var exec = require('child_process').exec;
 var validator = require('validator');
 var mysql = require('mysql');
-var Q = require('q');
+var q = require('q');
 var path = require('path');
 
 module.exports = yeoman.Base.extend({
@@ -160,7 +160,7 @@ module.exports = yeoman.Base.extend({
         type: 'input',
         name: 'dbServer',
         message: 'Database Server',
-        default: 'localhost'
+        defparenthesesault: 'localhost'
       },
       {
         type: 'input',
@@ -222,7 +222,10 @@ module.exports = yeoman.Base.extend({
         name: 'boPassword',
         message: 'BackOffice password (8 characters)',
         validate: function (str) {
-          return validator.isLength(str, {min: 8, max: undefined});
+          return validator.isLength(str, {
+            min: 8,
+            max: undefined
+          });
         },
         default: '12345678'
       }
@@ -246,30 +249,30 @@ module.exports = yeoman.Base.extend({
     var finalName = this.destinationPath(zipName).slice(0, -4);
     var parent = this;
 
-    function download () {
+    function download() {
       var req = request(zipUrl);
-      var deferred = Q.defer();
+      var deferred = q.defer();
       req
-      .on('data', function (chunk) {
-        bar = bar || new ProgressBar('Downloading... [:bar] :percent :etas', {
-          complete: '=',
-          incomplete: ' ',
-          width: 50,
-          total: parseInt(req.response.headers['content-length'], 10)
+        .on('data', function (chunk) {
+          bar = bar || new ProgressBar('Downloading... [:bar] :percent :etas', {
+            complete: '=',
+            incomplete: ' ',
+            width: 50,
+            total: parseInt(req.response.headers['content-length'], 10)
+          });
+          bar.tick(chunk.length);
+        })
+        .pipe(fs.createWriteStream(zipDestination))
+        .on('close', function () {
+          bar.tick(bar.total - bar.curr);
         });
-        bar.tick(chunk.length);
-      })
-      .pipe(fs.createWriteStream(zipDestination))
-      .on('close', function () {
-        bar.tick(bar.total - bar.curr);
-      });
 
       req.on('end', deferred.makeNodeResolver());
       return deferred.promise;
     }
 
-    function extract () {
-      var deferred = Q.defer();
+    function extract() {
+      var deferred = q.defer();
       console.log('Extracting the archive... Don\'t your dare ^C !');
       var zip = new AdmZip(zipDestination);
       zip.extractAllTo(extractDestination);
@@ -277,20 +280,20 @@ module.exports = yeoman.Base.extend({
       return deferred.promise;
     }
 
-    function renameFolder () {
-      var deferred = Q.defer();
+    function renameFolder() {
+      var deferred = q.defer();
       fs.rename(extractDestination + '/prestashop', finalName, deferred.makeNodeResolver());
       return deferred.promise;
     }
 
-    function removeZip () {
-      var deferred = Q.defer();
+    function removeZip() {
+      var deferred = q.defer();
       exec('rm -r ' + extractDestination, deferred.makeNodeResolver());
       return deferred.promise;
     }
 
-    function DBcheck () {
-      var deferred = Q.defer();
+    function DBcheck() {
+      var deferred = q.defer();
       var connection = mysql.createConnection({
         host: parent.props.dbServer,
         user: parent.props.dbUser,
@@ -298,38 +301,38 @@ module.exports = yeoman.Base.extend({
       });
       connection.connect();
       connection.on('error', function (err) {
-        console.log(chalk.red('Error: Invalid database credentials'));
+        console.log(chalk.red('Error: Invalid database credentials' + err));
         return false;
       });
-      connection.query('CREATE DATABASE IF NOT EXISTS ' + parent.props.dbName + ';', function(err) {
+      connection.query('CREATE DATABASE IF NOT EXISTS ' + parent.props.dbName + ';', function (err) {
         connection.end();
-        if (!err) {
-	  deferred.resolve('ok');
-        } else {
+        if (err) {
           console.log(chalk.red('Error: Failed to create database'));
-	  deferred.reject('Failed to create database');
+          deferred.reject('Failed to create database');
+        } else {
+          deferred.resolve('ok');
         }
       });
 
       return deferred.promise;
     }
 
-    function installPrestaShop () {
+    function installPrestaShop() {
       console.log('Installing PrestaShop...');
-      var deferred = Q.defer();
+      var deferred = q.defer();
 
       // Prevent installation if the PrestaShop release does not contain a CLI installer
-      // TODO: Complete list 
+      // TODO: Complete list
       if (parent.props.release === '0.9.7') {
         console.log(chalk.red('This release does not have a CLI installer. Please ' +
-                        'process the installation from your browser'));
+          'process the installation from your browser'));
         deferred.reject('No CLI installer found');
         return deferred.promise;
-      } 
+      }
 
       var installScript = finalName + '/install/index_cli.php';
-      var args = 
-        ' --domain=' + parent.props.storeDomain + 
+      var args =
+        ' --domain=' + parent.props.storeDomain +
         ' --db_server=' + parent.props.dbServer +
         ' --db_user=' + parent.props.dbUser +
         ' --db_password=' + parent.props.dbPassword +
@@ -345,8 +348,8 @@ module.exports = yeoman.Base.extend({
       return deferred.promise;
     }
 
-    function fixPhysicalUri () {
-      var deferred = Q.defer();
+    function fixPhysicalUri() {
+      var deferred = q.defer();
       var physicalUri = '/prestashop_' + parent.props.release + '/';
       var updateQuery = 'UPDATE ' + parent.props.dbPrefix + 'shop_url SET physical_uri=\'' + physicalUri + '\' WHERE id_shop=1';
       var connection = mysql.createConnection({
@@ -361,20 +364,20 @@ module.exports = yeoman.Base.extend({
       return deferred.promise;
     }
 
-    function deleteInstallDir () {
-      var deferred = Q.defer();
+    function deleteInstallDir() {
+      var deferred = q.defer();
       exec('rm -r ' + finalName + '/install', deferred.makeNodeResolver());
       return deferred.promise;
     }
 
-    function renameAdminDir () {
-      var deferred = Q.defer();
+    function renameAdminDir() {
+      var deferred = q.defer();
       fs.rename(finalName + '/admin', finalName + '/backoffice', deferred.makeNodeResolver());
       return deferred.promise;
     }
 
-    function outputSummary () {
-      var deferred = Q.defer()
+    function outputSummary() {
+      var deferred = q.defer();
       fs.readFile(parent.templatePath('ascii-puffin.txt'), 'utf8', function (err, data) {
         if (err) {
           deferred.reject(err);
@@ -389,16 +392,16 @@ module.exports = yeoman.Base.extend({
       return deferred.promise;
     }
 
-    Q().then(download)
-    .then(extract)
-    .then(renameFolder)
-    .then(removeZip)
-    .then(DBcheck)
-    .then(installPrestaShop)
-    .then(fixPhysicalUri)
-    .then(deleteInstallDir)
-    .then(renameAdminDir)
-    .then(outputSummary)
-    .catch(console.log);
+    q().then(download)
+      .then(extract)
+      .then(renameFolder)
+      .then(removeZip)
+      .then(DBcheck)
+      .then(installPrestaShop)
+      .then(fixPhysicalUri)
+      .then(deleteInstallDir)
+      .then(renameAdminDir)
+      .then(outputSummary)
+      .catch(console.log);
   }
 });
